@@ -1,0 +1,84 @@
+.content{
+    width: 45%;
+    color: #afbac4;
+    font-family: terminal;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    text-align: justify;
+    margin: 0 auto;
+}
+
+.content .location{
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-top: 20px;
+    margin-bottom: 4%;
+    color: #555;
+}
+
+.content h1{
+    font-size: 32px;
+    color: #FFF;
+    margin-bottom: 0;
+}
+
+.content h2{
+    color: #FFF;
+    font-size: 22px;
+}
+
+/*modularizar*/
+.content .link{
+    color: #66d9ef;
+}
+
+.content .method{
+    color: #66d9ef;
+}
+
+.content .header{
+    color: #e6db74;
+}
+
+.content .placeholder{
+    color: #ef66e8;    
+    text-decoration: underline;
+}
+
+.content .json-param{
+
+color: #a6e22e;
+}
+
+.content .json-value{
+    color: #f92649;
+    
+}
+
+.content a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.content a:hover{
+    text-decoration: underline;
+}
+
+.content pre{
+    border-left: 5px solid #a6e22e8f;
+    background-color: #202020cc;
+    padding: 2%;
+    font-family: terminal;
+    font-size: 14px;
+    margin: none;
+    color: rgb(151, 151, 151);
+}
+
+.footer{
+    margin-top: 3%;
+}
+

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>...::: R4lPz :::...</title>
+	<link rel="stylesheet" type="text/css" href="../styles/master.css">
+    <link rel="stylesheet" type="text/css" href="./index.css">
+</head>
+<body>
+
+    <section class="menu">
+        <div class="logo">
+            <a href="/index.html">
+                    <pre>                                                  
+        @@@@@@@@@@        
+    @@@@@@@@@@@@@@@@@@    
+  @@@@@@@@@@@@@@@@@@@@@@  
+ @@@@@@@@@@@@@@@@@@@@@@@@ 
+ @@@@     @@@@@@@    @@@@@
+@@@       @@@@@@        @@
+          @@  @@          
+         @@    @@         
+ @@@@@@@@@      @@@@@@@@@ 
+@@@@@@@@@@      @@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@
+        @@@@@@@@@@        
+                    </pre>
+            </a>
+        </div>
+
+        <div class="pages">
+            <a href="/index.html">Home</a>
+            <a href="/blog.html" class="selected">Blog</a>
+        </div>
+
+        <div class="links">
+            <a href="https://discordapp.com/users/r4lpz/" target="_blank"></a>
+            <a href="https://x.com/r4lpz/" target="_blank"></a>
+            <a href="https://github.com/R4LPz/" target="_blank"></a>
+        </div>
+    </section>
+
+    <section class="content">
+        <h1>$ Remote command execution at Parsec Traksys</h1>
+
+        <div class="location">
+                <span>19/06/2024 - 19:00</span>
+        </div>
+        
+        <p>Traksys is MES software produced and distributed by Parsec Automation Corp. Focusing on manufacturing; the application is designed to optimize industrial operations through the collection, analysis, and visualization of data in real-time, customizable and adaptable to each use case.</p>
+        <p>Recently, we discovered the possibility of performing a vertical escalation of privileges in an administrative functionality, which culminated in the remote execution of commands on the application server.</p>
+        
+        <h2># Affected point</h2>
+        
+        <p>Versions 11.xx.xx of Traksys software (Parsec Automation Corp.) were found to be vulnerable to vertical privilege escalation on the following endpoint:</p>
+        <pre class="link"> >  https://{HOST}/TS/web/{APP}/content/updateproperty </pre>
+
+        <h2># Description</h2>
+        
+        <p>The functionality present at the affected point is an administrative resource responsible for configuring the web pages made available by the application.</p>
+        <p>However, a flaw was noted in the target application&#39;s access control mechanism, which allowed vertical privilege escalation to be carried out. Allowing a malicious individual to operate outside of their permission group.</p>
+        <p>As a proof of concept, the following image illustrates a request to the affected point using the session token of a non-administrative — and low-privileged — user. Note the successful inclusion of malicious Javascript code in the page content.</p>
+        <img src="./images/include-js.png" alt="IMAGE">
+        <p>As a consequence, when accessing the target page it is possible to notice the execution of the inserted code. This behavior allows low-privileged users to execute Cross Site Scripting (XSS) attacks in a stored manner on arbitrary pages of the application.</p>
+        <p>The following image shows the result of the previous operation:</p>
+        <img src="./images/xss.png" alt="IMAGE">
+        <p>To make matters worse, the same functionality is responsible for editing the views of the application; these structures are responsible for executing backend code when accessing the target page. In this way, an attacker would be able — through the privilege escalation illustrated above — to execute code on the application server and obtain its output by accessing the target page.</p>
+        <p>To make matters worse, the same functionality is responsible for editing the views of the application, these structures are responsible for executing backend code when accessing the target page. In this way, an attacker would be able — through the privilege escalation illustrated above — to execute code on the application server and obtain its output by accessing the target page.</p>
+        <img src="./images/code-include.png" alt="IMAGE">
+        <p>As a consequence, the content of the executed command is returned when accessing the target page:</p>
+        <img src="./images/rce.png" alt="IMAGE">
+        <p>Based on what this article exposed, an attacker could establish a reverse shell on the application server and consequently cause significant damage to the victim. Therefore, it is highly recommended that the software be urgently updated to the latest version.</p>
+        
+        <h2># Recommendation</h2>
+        
+        <p>>> For the software provider:</p>
+        <p>It is recommended that existing session management and access control mechanisms be revised to restrict access to administrative areas of the application to administrators only.</p>
+        <p>It is important to note that determining which activities are associated with which user (profile) must be done exclusively on the server side.</p>
+        
+        <p>>> For the clients:</p>
+        <p>It is highly recommended that the software be urgently updated to the latest version.</p>
+
+
+        <h2># How to reproduce</h2>
+        <ol>
+            <li>Log into the application with an administrative account;</li>
+            <li>Access the developer functionality in the top menu and follow the page creation flow in New Section &gt; Open &gt; New;</li>
+            <li>Take the page ID you created;</li>
+            <li>Log into the application with a low-privilege user to get a valid session cookie;</li>
+            <li>Execute the following request, replacing the <g class="placeholder">ID</g> field with the page ID obtained in Step 3 and the <g class="placeholder">COOKIE</g> field with the session cookie obtained in the previous step:</li>
+            <pre class="http-code"><g class="method">POST /TS/web/{APP_NAME}/content/updateproperty HTTP/1.1</g>
+<g class="header">Host</g>: {HOST}.com
+<g class="header">Content-Length</g>: 103
+<g class="header">Content-Type</g>: application/json
+<g class="header">Cookie</g>: .AspNet.ApplicationCookie=<g class="placeholder">COOKIE</g>;
+
+{
+    <g class="json-param">"ID"</g>:<g class="placeholder">ID</g>,
+    <g class="json-param">"Code"</g>:<g class="json-value">"alert(document.domain)"</g>,
+    <g class="json-param">"Entity"</g>:<g class="json-value">"PageDefinition"</g>,
+    <g class="json-param">"EntityProperty"</g>:<g class="json-value">"Js"</g>,
+    <g class="json-param">"PartID"</g>:<g class="json-value">""</g>
+}</pre>
+            <li>Note that the application responds successfully to the request and modifies the page as requested.</li>
+        </ol>
+        
+        
+
+        <h2># Refs</h2>
+        <ul>
+            <li>
+                <a href="https://kiwiyumi.com/post/traksys-export-page-code/">
+                    Similar Vulnerability in Parsec Traksys - Direct access to export Pages funcionality;
+                </a>
+            </li>
+            <li>
+                <a href="https://kiwiyumi.com/post/tracksys-export-source-code/">
+                    Similar Vulnerability CVE-2024-6188 - Direct access to export Source Code;
+                </a>
+            </li>
+            <li>
+                <a href="https://cheatsheetseries.owasp.org/">
+                    OWASP - cheat sheet series;
+                </a>
+            </li>
+            <li>
+                <a href="https://portswigger.net/burp/documentation/desktop/testing-workflow/access-controls/privilege-escalation">
+                    Testing for privilege escalation - Portswigger;
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section class="footer">
+        2024 - Hacking still lives!
+    </section>
+</div>
+</body>
+</html>

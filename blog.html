@@ -5,9 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>...::: R4lPz :::...</title>
 	<link rel="stylesheet" type="text/css" href="./styles/master.css">
-    <link rel="stylesheet" type="text/css" href="./styles/home.css">
+    <link rel="stylesheet" type="text/css" href="./styles/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+
     <section class="menu">
         <div class="logo">
             <a href="/index.html">
@@ -30,8 +32,8 @@
         </div>
 
         <div class="pages">
-            <a href="/index.html" class="selected">Home</a>
-            <a href="/blog.html">Blog</a>
+            <a href="/index.html">Home</a>
+            <a href="/blog.html" class="selected">Blog</a>
         </div>
 
         <div class="links">
@@ -42,15 +44,26 @@
     </section>
 
     <section class="content">
-    
-    <div class="text">
-        <h1>$ R4LP</h1>
-        <h4>Pentester | Engineer | Ordinary developer</h4>
-        <p> Hacking is subverting, whatever it is, in your favor. It's knowing so much about a certain subject to the point of being able to do something imaginable. It's a way of proving to yourself - and sometimes to others - that you can do the impossible.
-            In essence, hacking is thinking differently, it's thinking like no one else has thought, it's about being curious and solving problems. This has always been the premise, from the "old school" to the present day. That has never changed and will never change!</p>
-
-            <p>Let's do it. Keep hacking! <span class="cursor">█</span></p>
-    </div>
+        <div class="card">
+            <a href="/rce-parsec-traksys/index.html">
+                <h1>$ Remote command execution at  Parsec Traksys - [CVE-2024-12345]</h1>
+                <p>A recently discovered vertical privilege escalation that allowed me to execute stored XSS and execute commands remotely on the server.</p>
+                <div class="author">
+                    <span class="web">Web</span>
+                    <span class="cve">CVE</span>
+                </div>
+            </a>
+        </div>
+        <div class="card">
+            <h1>$ A study about event data injection</h1>
+            <p>Coming soon ...</p>
+            <div class="author">
+                <span class="cloud">Cloud</span>
+            </div>
+        </div>
+        <div class="card">
+            <h1>...</h1>
+        </div>
         
     </section>
 
